@@ -19,8 +19,9 @@ class AirDrawing:
         self.drawing_points = []
         self.current_point = None
         self.canvas = None
+        self.draw_color = (0, 255, 0)
 
-    def process_frame(self, frame, draw_color=(0, 255, 0), erase_color=(255, 0, 0)):
+    def process_frame(self, frame, erase_color=(255, 0, 0)):
         # initialize canvas if not created
         if self.canvas is None:
             self.canvas = np.zeros_like(frame)
@@ -52,13 +53,15 @@ class AirDrawing:
                     and middle_finger_tip > middle_finger_mcp
                 ):
                     # we draw circle at index finger tip when drawing is on
-                    cv2.circle(frame, (x, y), 10, draw_color, -1)
+                    cv2.circle(frame, (x, y), 10, self.draw_color, -1)
 
                     if self.current_point is None:
                         self.current_point = (x, y)
                     else:
                         # draw line on canvas
-                        cv2.line(self.canvas, self.current_point, (x, y), draw_color, 4)
+                        cv2.line(
+                            self.canvas, self.current_point, (x, y), self.draw_color, 4
+                        )
                         self.current_point = (x, y)
                 # erasing mode
                 elif (

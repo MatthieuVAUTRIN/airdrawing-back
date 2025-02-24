@@ -1,10 +1,9 @@
-import base64
-
 import cv2
 import numpy as np
 from fastapi import FastAPI, WebSocket
 
 from src.classes.airdrawing import AirDrawing
+from src.models.models import ColorData
 
 app = FastAPI()
 
@@ -18,23 +17,21 @@ async def websocket_endpoint(websocket: WebSocket):
 
     try:
         while True:
-            data = await websocket.receive_json()
+            data = await websocket.receive_bytes()
 
-            # convert base64 to numpy array
-            frame_data = base64.b64decode(data["frame"])
-            nparr = np.frombuffer(frame_data, np.uint8)
-            frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)  # Shape: (H, W, 3)
+            image_array = np.frombuffer(data, np.uint8)
+            frame = cv2.imdecode(image_array, cv2.IMREAD_COLOR)  # shape: (H, W, 3)
 
             # process frame
-            draw_color = list(data["draw_color"])
             erase_color = (0, 0, 255)
-            processed_frame = air_drawing.process_frame(frame, draw_color, erase_color)
+            processed_frame = air_drawing.process_frame(frame, erase_color)
 
-            # convert processed frame back to base64 (bettr for sending over websocket)
-            _, buffer = cv2.imencode(".jpg", processed_frame)
-            encoded_frame = base64.b64encode(buffer).decode("utf-8")
+            # encode frame to jpg for lower resolution
+            _, buffer = cv2.imencode(
+                ".jpg", processed_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 50]
+            )
 
-            await websocket.send_json({"frame": encoded_frame})
+            await websocket.send_bytes(buffer.tobytes())
 
     except Exception as e:
         print(f"Error: {e}")
@@ -45,3 +42,9 @@ async def websocket_endpoint(websocket: WebSocket):
 async def clear_canvas():
     air_drawing.canvas = None
     return {"message": "Canvas cleared"}
+
+
+@app.post("/change-color")
+async def change_color(color_data: ColorData):
+    air_drawing.draw_color = color_data.color
+    return {"message": "Color changed"}
