@@ -33,9 +33,12 @@ COPY ./src /app/src
 # Copy the environment, but not the source code
 COPY --from=builder --chown=$USERNAME:$USERNAME /app/.venv /app/.venv
 
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app/.venv/lib/python3.12/site-packages"
+
 EXPOSE 8000
 
 USER $USERNAME
 
 # Run the application
-CMD [".venv/bin/python3.12", "-m", "uvicorn", "src.main:app",  "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python3.12", "-m", "uvicorn", "src.main:app",  "--host", "0.0.0.0", "--port", "8000"]
