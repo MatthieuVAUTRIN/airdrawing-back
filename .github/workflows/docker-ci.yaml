@@ -31,5 +31,6 @@ jobs:
         run: docker login ghcr.io -u ${{ secrets.GITHUB_TOKEN }} -p ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push the Docker image
-        run: docker push ghcr.io/matthieuvautrin/airdrawing-back:${{ github.sha }}
-             docker push ghcr.io/matthieuvautrin/airdrawing-back:latest
+        run: |
+          docker push ghcr.io/matthieuvautrin/airdrawing-back:${{ github.sha }}
+          docker push ghcr.io/matthieuvautrin/airdrawing-back:latest
