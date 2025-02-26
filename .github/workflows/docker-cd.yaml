@@ -1,5 +1,0 @@
-name: Deploy docker images to Server
-
-on:
-  push:
-    branches: ["master"]
