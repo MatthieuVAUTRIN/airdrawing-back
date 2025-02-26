@@ -1,7 +1,7 @@
 ---
 services:
   backend:
-    image: ghcr.io/matthieuvautrin/airdrawing-back:6edf091567379c30418604e977fa30da541ed3a4
+    image: ghcr.io/matthieuvautrin/airdrawing-back:latest
     ports:
       - "8000:8000"
     healthcheck:
@@ -13,7 +13,7 @@ services:
       - app-network
 
   frontend:
-    image: ghcr.io/matthieuvautrin/airdrawing-front:7e7f19b36480412da6137dd4ce3eee6eb1647c6e
+    image: ghcr.io/matthieuvautrin/airdrawing-front:latest
     group_add:
       - video
     ports:
