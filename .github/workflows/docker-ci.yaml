@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build the Docker image
-        run: docker build -f Dockerfile.back -t ghcr.io/matthieuvautrin/airdrawing-back:latest -t ghcr.io/matthieuvautrin/airdrawing-back:${{ github.sha }} .
+        run: docker build -f Dockerfile.back -t ghcr.io/matthieuvautrin/airdrawing-back:${{ github.sha }} .
 
       - name: Install and run Container Structure Tests
         run: |
@@ -33,4 +33,3 @@ jobs:
       - name: Push the Docker image
         run: |
           docker push ghcr.io/matthieuvautrin/airdrawing-back:${{ github.sha }}
-          docker push ghcr.io/matthieuvautrin/airdrawing-back:latest
