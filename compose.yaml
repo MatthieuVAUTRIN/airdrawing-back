@@ -1,0 +1,43 @@
+---
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile.back
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app-network
+
+  frontend:
+
+    group_add:
+      - video
+
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.front
+    ports:
+      - "8501:8501"
+    devices:
+      - /dev/video0:/dev/video0
+    volumes:
+      - ../frontend/src:/app/src
+    environment:
+       - WEBSOCKET_URL=ws://backend:8000/ws
+       - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
