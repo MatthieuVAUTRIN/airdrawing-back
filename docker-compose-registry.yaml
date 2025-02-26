@@ -1,13 +1,9 @@
 ---
 services:
   backend:
-    build:
-      context: ./
-      dockerfile: Dockerfile.back
+    image: ghcr.io/matthieuvautrin/airdrawing-back:6edf091567379c30418604e977fa30da541ed3a4
     ports:
       - "8000:8000"
-    volumes:
-      - ./src:/app/src
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -17,19 +13,13 @@ services:
       - app-network
 
   frontend:
-
+    image: ghcr.io/matthieuvautrin/airdrawing-front:7e7f19b36480412da6137dd4ce3eee6eb1647c6e
     group_add:
       - video
-
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile.front
     ports:
       - "8501:8501"
     devices:
       - /dev/video0:/dev/video0
-    volumes:
-      - ../frontend/src:/app/src
     environment:
        - WEBSOCKET_URL=ws://backend:8000/ws
        - BACKEND_URL=http://backend:8000
